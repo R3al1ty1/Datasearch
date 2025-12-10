@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     )
 
     PROJECT_NAME: str = "DataSearch"
-    API_V1_STR: str = "/api/v1"
+    API_V1_STR: str = "/api"
     ENVIRONMENT: AppEnvironment = AppEnvironment.LOCAL
     DEBUG: bool = False
 

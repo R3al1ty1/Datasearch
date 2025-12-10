@@ -2,7 +2,7 @@ import logging
 
 from lib.core.config import Settings
 from lib.core.database import DatabaseManager
-from lib.core.logger import setup_logging
+from lib.core.logger import LoggerManager
 
 
 class AppContainer:
@@ -10,7 +10,7 @@ class AppContainer:
     def __init__(self):
         self._settings = Settings()
 
-        self._logger = setup_logging()
+        self._logger = LoggerManager()
 
         self._db_manager = DatabaseManager(
             dsn=self._settings.SQLALCHEMY_DATABASE_URI,

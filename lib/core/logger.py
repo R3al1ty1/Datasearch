@@ -4,14 +4,22 @@ import sys
 from lib.core.constants import LogConfig
 
 
-def setup_logging() -> logging.Logger:
-    """Setups logger for service."""
-    logging.basicConfig(
-        stream=sys.stdout,
-        level=logging.INFO,
-        format=LogConfig.FORMAT
-    )
+class LoggerManager:
+    """Logger manager for setting up global logging configuration."""
+    def __init__(self):
+        """
+        Initializes the global logging configuration once upon instantiation.
+        """
+        root = logging.getLogger()
+        if not root.handlers:
+            logging.basicConfig(
+                stream=sys.stdout,
+                level=logging.INFO,
+                format=LogConfig.FORMAT.value
+            )
 
-    logger = logging.getLogger()
+        self._logger = logging.getLogger()
 
-    return logger
+    def get_logger(self) -> logging.Logger:
+        """Dependency Provider for FastAPI."""
+        return self._logger
