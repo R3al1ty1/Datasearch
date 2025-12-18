@@ -50,6 +50,82 @@ class HFDatasetDTO(BaseModel):
         return datetime.now(timezone.utc)
 
 
+class KaggleMetaDatasetDTO(BaseModel):
+    """DTO for Meta Kaggle CSV (Datasets.csv) - minimal metadata."""
+    Id: int = Field(..., description="Kaggle dataset ID")
+    CreatorUserId: Optional[int] = None
+    OwnerUserId: Optional[int] = None
+    OwnerOrganizationId: Optional[int] = None
+    CurrentDatasetVersionId: Optional[int] = None
+    CurrentDatasourceVersionId: Optional[int] = None
+    ForumId: Optional[int] = None
+    Type: Optional[str] = None
+    CreationDate: Optional[datetime] = None
+    LastActivityDate: Optional[datetime] = None
+    TotalViews: int = 0
+    TotalDownloads: int = 0
+    TotalVotes: int = 0
+    TotalKernels: int = 0
+
+    model_config = ConfigDict(populate_by_name=True, extra="ignore")
+
+    @property
+    def external_id(self) -> str:
+        """Returns string representation of dataset ID."""
+        return str(self.Id)
+
+    def get_update_time(self) -> datetime:
+        """Get dataset update time safely."""
+        if self.LastActivityDate:
+            return self.LastActivityDate
+        if self.CreationDate:
+            return self.CreationDate
+        return datetime.now(timezone.utc)
+
+
+class KaggleEnrichedDatasetDTO(BaseModel):
+    """DTO for enriched Kaggle dataset from API (detailed metadata)."""
+    ref: str = Field(..., description="Dataset reference (owner/dataset-name)")
+    title: str
+    subtitle: Optional[str] = None
+    creatorName: Optional[str] = None
+    totalBytes: int = 0
+    url: str
+    createdDate: Optional[datetime] = None
+    lastUpdated: Optional[datetime] = None
+    downloadCount: int = 0
+    voteCount: int = 0
+    viewCount: int = 0
+    licenseName: Optional[str] = None
+    description: Optional[str] = None
+    data: Optional[List[dict]] = Field(default_factory=list, description="Dataset files info")
+
+    model_config = ConfigDict(populate_by_name=True, extra="ignore")
+
+    @property
+    def external_id(self) -> str:
+        """Returns dataset reference."""
+        return self.ref
+
+    @property
+    def column_names(self) -> List[str]:
+        """Extract column names from dataset files metadata."""
+        columns = []
+        if self.data:
+            for file in self.data:
+                if isinstance(file, dict) and "columns" in file:
+                    columns.extend(file["columns"])
+        return columns
+
+    def get_update_time(self) -> datetime:
+        """Get dataset update time safely."""
+        if self.lastUpdated:
+            return self.lastUpdated
+        if self.createdDate:
+            return self.createdDate
+        return datetime.now(timezone.utc)
+
+
 class SearchRequest(BaseModel):
     query: str = Field(..., min_length=1, max_length=200, description="Natural language search query")
     limit: int = Field(10, ge=1, le=50, description="Number of results to return")

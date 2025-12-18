@@ -5,6 +5,7 @@ from lib.core.database import DatabaseManager
 from lib.core.logger import LoggerManager
 from lib.services.ml.embedder import EmbeddingService
 from lib.services.enrichment.client_hf import HuggingFaceClient
+from lib.services.enrichment.kaggle_parser import KaggleClient
 
 
 class AppContainer:
@@ -21,6 +22,7 @@ class AppContainer:
 
         self._embedding_service = EmbeddingService()
         self._hf_client = HuggingFaceClient()
+        self._kaggle_client = KaggleClient()
 
     @property
     def settings(self) -> Settings:
@@ -41,6 +43,10 @@ class AppContainer:
     @property
     def hf_client(self) -> HuggingFaceClient:
         return self._hf_client
+
+    @property
+    def kaggle_client(self) -> KaggleClient:
+        return self._kaggle_client
 
 
 container = AppContainer()

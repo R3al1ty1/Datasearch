@@ -1,2 +1,4 @@
 .env
 .python-version
+CLAUDE.md
+__pycache__/
